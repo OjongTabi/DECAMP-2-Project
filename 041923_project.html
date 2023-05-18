@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Patient Query Page</title>
+   
+        <!-- load the jQuery library -->
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        
+        <!--Load the google charts library-->
+        <script src="https://www.gstatic.com/charts/loader.js"></script>
+ 
+</head>
+<body>
+	<h1>DECAMP2 Patient Query </h1>
+	<h2>Welcome to the DECAMP2 Patient Query! <br> Select from the options below whether you would like to perform a single patient query or query of the entire database. </h2>
+
+	<h1>Single Patient Query</h1>
+    Enter a patient ID (examples:xxxx):<br>
+    <input type="text" id="id">
+    <button type="button" id="singlePt_button">single patient query</button><br><br>
+    <div id="single-query-div"></div>
+    
+    <h1>Whole Database Search</h1>
+    Click here to search the entire database for summary data:
+   <button onclick="multiplePatientQuery()">Multiple Patient Query</button>
+   	<div id="multiple-query-div" style="display:none;">
+		<label for="query-option">Select query option:</label>
+		<select id="query-option">
+			<option value="option1">Option 1</option>
+			<option value="option2">Option 2</option>
+			<option value="option3">Option 3</option>
+		</select>
+		<button onclick="submitMultipleQuery()" id="multiplePt_button">Submit</button>
+		<br><br>
+		<table id="multiple-query-table" style="display:none;"></table>
+		<br>
+		<button id="multiple-query-download-btn" style="display:none;">Download Data</button>
+	</div>
+	
+	<h1>Download Entire Dataset</h1>
+    <br>
+    <button type="button" id="download_button">download data set</button><br><br>
+  
+	<script>
+		function multiplePatientQuery() {
+			document.getElementById("multiple-query-div").style.display = "block";
+		}
+
+		$(document).ready(function() {
+		
+			$("#singlePt_button").click(function() {
+                	$("#single-query-div").empty();
+
+                var id = $("#id").val();
+
+                if (CheckID(id) == 0) {
+                
+                // TODO: add data path here
+                    $.get("https://bioed.bu.edu/cgi-bin/students_23/Team_G/041923_Project_AJAX.py", 
+                        {
+                            id: id,
+                            query: "singlePatientSearch"
+                        }, 
+                        function(data) {
+                            if (data["error"] == 0) {
+                                submitSingleQuery(data["table_data"], id);
+                            } else {
+                                $("#single-query-div").append(data["message"]);
+                            } 
+
+                        },
+                        "json" 
+                    );
+                } else {
+                    alert(CheckID(id))
+                }
+
+            });
+            
+            $("#multiplePt_button").click(function() {
+                	$("#multiple-query-div").empty();
+
+                let id = $("#id").val();
+
+                if (id != "") {
+                
+                // TODO: add data path here
+                    $.get("https://bioed.bu.edu/cgi-bin/students_23/-----.py", 
+                        {
+                            id: id,
+                            query: "wholePatientSearch"
+                        }, 
+                        function(data) {
+                            if (data["error"] == 0) {
+                                submitMultipleQuery(data["table_data"], id);
+                            } else {
+                                $("#multiple-query-div").append(data["message"]);
+                            } 
+
+                        },
+                        "json" 
+                    );
+                } else {
+                    alert(CheckID(id))
+                }
+
+            });
+
+		
+		function downloadDataset() {
+			// TODO: code to download entire dataset
+		}
+
+		function CheckID(id) {
+            errorMessage = ""
+            if (id == 0) {
+                return "You didnt enter data "
+            }
+            return errorMessage
+        }
+		
+		function SingleTableTitle(id) {
+            return `Data table for patient id ${id}`
+        }
+		
+		function submitSingleQuery(data,id) {
+			var id = document.getElementById("id").value;
+			
+			let tableTitle = SingleTableTitle(id)
+
+            let table_body_contents = "";
+            let rowData = "";
+
+            $("#single-query-div").empty();
+
+            if (data != "") {
+            
+				// TODO: add relevant data and change column headings
+                for (let row = 0; row < data.length; row++) {
+	
+                    rowData = data[row];
+                    a = rowData[0]
+                    b = rowData[1]
+                    c = rowData[2]
+                    d = rowData[3]
+
+                    table_body_contents += `<tr><td> ${a}</td><td> ${b}</td><td> ${c}</td><td> ${d}</td></tr>`;
+                }
+
+                //build the entire table template and susbstitute in the table data rows and the gene name 
+                let table_template = `<table class="table table-hover"><thead><tr><th>a</th><th>b</th><th>c</th><th>d</th></tr></thead><tbody>${table_body_contents}</tbody></table>`;
+
+                $("#single-query-div").append(tableTitle);
+                //put the final table in the table div
+                $("#single-query-div").append(table_template);
+            }
+		}
+
+		function submitMultipleQuery(data,id) {
+			var id = document.getElementById("id").value;
+			
+			// TODO: make this more specific
+			let tableTitle = 'Whole Database Query'
+
+            let table_body_contents = "";
+            let rowData = "";
+
+            $("#multiple-query-div").empty();
+
+            if (data != "") {
+            
+				// TODO: add relevant data and change column headings
+                for (let row = 0; row < data.length; row++) {
+	
+                    rowData = data[row];
+                    a = rowData[0]
+                    b = rowData[1]
+                    c = rowData[2]
+                    d = rowData[3]
+
+                    table_body_contents += `<tr><td> ${a}</td><td> ${b}</td><td> ${c}</td><td> ${d}</td></tr>`;
+                }
+
+                //build the entire table template and susbstitute in the table data rows 
+                let table_template = `<table class="table table-hover"><thead><tr><th>a</th><th>b</th><th>c</th><th>d</th></tr></thead><tbody>${table_body_contents}</tbody></table>`;
+
+                $("#multiple-query-div").append(tableTitle);
+                //put the final table in the table div
+                $("#multiple-query-div").append(table_template);
+            }
+		}
+	})
+	</script>
+</body>
+</html>

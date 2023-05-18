@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>DECAMP2</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+	<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+	<link href="jquery.flexdatalist.css" rel="stylesheet">
+	<script src="jquery.flexdatalist.js"></script>
+	<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+	<script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+	<script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+	<script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+	<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+	<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+
+	<style>
+		button {
+  background: #0c2340;
+  color: #f5f5f5;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 0px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  
+}
+button:hover {
+  background-color: #8b0000;
+}
+
+		body {
+			margin: 0;
+			padding: 0;
+			font-family: Arial, sans-serif;
+		}
+
+		body, #header {
+			overflow: hidden;
+		}
+
+
+		/* Top menu bar */
+		.top-menu {
+			background-color: #0c2340;
+			color: #ffffff;
+			height: 100px;
+			display: flex;
+			align-items: center;
+			font-size: 24px;
+			font-weight: bold;
+		}
+
+		.logo {
+			display: inline-block;
+			margin-left: 66px;
+			margin-right: 64px;
+		}
+
+		.logo img {
+			height: 90px;
+			vertical-align: middle;
+		}
+
+		/* Left side bar */
+		.left-sidebar {
+			background-color: #0c2340;
+			height: 100%;
+			width: 200px;
+			position: fixed;
+			top: 100px;
+			left: 0;
+			overflow-x: hidden;
+			padding-top: 0px;
+		}
+
+		.left-sidebar div {
+			margin-bottom: 2px;
+			background-color: #223f5a;
+			box-shadow: 2px 2px 2px rgba(0,0,0,0.4);
+		}
+
+		.left-sidebar a {
+			display: block;
+			padding: 16px;
+			color: #ffffff;
+			font-size: 18px;
+			text-decoration: none;
+		}
+
+		.left-sidebar a:hover {
+			background-color: #8b0000;
+		}
+
+		/* Content div */
+		.content {
+			margin-top: 0px;
+			margin-left: 200px;
+			padding: 5px;
+			background-color: #ffffff;
+			height: 1000px;
+		}
+
+		#searchInput {
+   padding: 8px;
+   border: 1px solid #ccc;
+   border-radius: 4px;
+   margin-bottom: 10px;
+}
+
+.my-div {
+  border: 0px solid black;
+  width: 1200px;
+  height: 650px;
+  overflow: auto;
+}
+	</style>
+	<script>
+				$(document).ready(function() {
+					$("#content-page").empty();
+					google.charts.load('current', {packages: ['corechart']});
+				var content = "<div style='background-color:#8b0000; box-shadow: 0 0 10px rgba(0, 0, 0, 0.9); height:50px; margin-top:-20px;'> <h2 style='color:#f5f5f5; text-align:center; line-height: 50px;'>Introduction</h2> </div> <br><div style='height: 700px; overflow: auto;'> <img src='study_logo.png' alt='study_logo' style='width:700px;display:block; margin:auto;'> <p style='color: #0c2340; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5; text-align: justify; padding-left:10px; padding-right:10px;'>DECAMP2 (Detection of Early Cancer Among Military Personnel 2) is an ongoing project developed under the Department of Defense (DoD) and funded in part by the DoD Lung Cancer Research Program, National Cancer Institute, Janssen Pharmaceuticals, and Novartis Institutes for Biomedical Research. The goal of the DECAMP2 study is to improve early detection of lung cancer in high-risk individuals using minimally invasive specimens. Participants are recruited for the study based on an assessment indicating they are considered high risk for lung cancer and must also have a diagnosis of chronic obstructive pulmonary disease, emphysema or at least one first-degree relative with a diagnosis of lung cancer.</p><p style='color: #0c2340; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5; text-align: justify; padding-left:10px; padding-right:10px; font-weight:bold;'>This webpage provides easy access to DECAMP2 patient data with multiple visualizations and handy features to explore data through multiple angles. Features of the webpage include: <br> - Overview of the study through visualizations <br> - Search for patient specific attributes <br> - Search for attributes for all patients <br> - Get answers to commonly asked questions about the study <br> - Find what attributes are collected and what they mean </p> <br><br> <p style='color: #0c2340; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5; text-align: center; padding-left:10px; padding-right:10px; margin-top:120px'>This webpage has been developed by Whitney Souery, Irzam Sarfraz & Ojong Tabi with Dr. Ehab Billatos & Dr. Marc Lenburg as faculty advisors at Boston University as a part of BF768 Spring 2023 course by Dr. Gary Benson.</p></div>"
+      			$("#content-page").html(content);
+
+					$('#example').DataTable({dom: 'Bfrtip', buttons: ['csv', 'excel', 'pdf']});
+					$('#example2').DataTable({dom: 'Bfrtip', buttons: ['csv', 'excel', 'pdf']});
+
+					$("#content-page").on("click", "#singlePt_attr", function() {
+						var parentDiv = document.getElementById("sp-div"); // Get the parent div element
+						var childDiv = document.createElement("div"); // Create a new child div element
+						childDiv.innerHTML = "<br><div class='checkbox-group'> <div class='group-description'><b>Demographics:</b></div> <label><input type='checkbox' name='D2DEMO[]' value='ETHN_GRP_CAT_TXT'>Ethnicity</label> <label><input type='checkbox' name='D2DEMO[]' value='PERSON_GENDER'>Gender</label> <label><input type='checkbox' name='D2DEMO[]' value='RACE_CAT_TXT'>Race</label></div><div class='checkbox-group'> <div class='group-description'><b>Smoking History:</b></div> <label><input type='checkbox' name='D2PCSMKHX[]' value='PT_COMPL_SMOK_STAT'>Current smoking status</label> <label><input type='checkbox' name='D2PCSMKHX[]' value='PT_COMPL_SMOK_HAB'>Current smoking habit</label> <label><input type='checkbox' name='D2PCSMKHX[]' value='PT_COMPL_CIG_DAY'>Avg # cigarettes/day</label></div> <div class='checkbox-group'><div class='group-description'><b>Additional data:</b></div> <label><input type='checkbox' name='RNA[]' value='columnanme'>RNA-Seq</label></div>";
+						parentDiv.appendChild(childDiv);
+					});
+
+					$("#content-page").on("click", "#q-copy", function() {
+						var copyText = document.getElementById("my-textarea");
+						copyText.select();
+						copyText = copyText.sort();
+						document.execCommand("copy");
+					});
+
+					$("#content-page").on("click", "#q-go", function() {
+						var text = $('#my-textarea').val();
+   						var sortedText = text.split(',').map(Number).sort((a, b) => a - b).join(',');
+						$("#content-page").empty();
+						var content = "<div style='background-color:#8b0000; box-shadow: 0 0 10px rgba(0, 0, 0, 0.9); height:50px; margin-top:-20px;'> <h2 style='color:#f5f5f5; text-align:center; line-height: 50px;'>Individual Patient Data</h2> </div> <br><div style='height: 700px; overflow: auto;'><div id ='sp-div' style='text-align: center; justify-content: center; align-items: center;'> Comma separated list of Patient IDs: &nbsp; <input type='text' id='sp_list'>&nbsp;<button type='button' id='singlePt_attr'>Select Attributes</button>&nbsp;<button type='button' id='singlePt_button'>Submit</button></div> <div id='single-query-div'> <table id='example' class='table table-hover'> <thead> <tr></tr> </thead> </table></div></div></div>"
+						$("#content-page").html(content);
+						$('#sp-list').val(sortedText);
+						var myTextbox = document.getElementById("sp_list");
+						myTextbox.value = sortedText;
+					});
+
+					$("#content-page").on("click", "#makePlot", function() {
+						$('#gender-chart2').empty();
+
+						$.get("https://bioed.bu.edu/cgi-bin/students_23/Team_G/queries.py", 
+                          {id: "", selector:"raceCount"},
+                          function(data){
+							if(data.length > 0){
+								var chartType = $('#makePlotDropdown').val();
+								drawChartRace(data, chartType);
+							}
+                          },
+                          "json"
+                   		 );
+
+						function drawChartRace(targetScoresData, chartType) {
+							var data = google.visualization.arrayToDataTable([
+          					['Race','Count'],
+          					['American Indian or Alaska Native', parseInt(targetScoresData[0])],
+		  					['Asian', parseInt(targetScoresData[1])],
+							  ['Black or African American', parseInt(targetScoresData[2])],
+							  ['Native Hawaiian or Other Pacific Islander', parseInt(targetScoresData[3])],
+							  ['Not Reported', parseInt(targetScoresData[4])],
+							  ['Unknown', parseInt(targetScoresData[5])],
+							  ['White', parseInt(targetScoresData[6])]
+							]);
+							var title = 'Race';
+							//var options = {'title':title,'width':600,'height':300};	
+							var options = {'title':title};
+							var chart;
+							if(chartType == "option1"){
+								chart = new google.visualization.PieChart(document.getElementById('gender-chart2'));
+							}
+							if(chartType == "option2"){
+								chart = new google.visualization.Histogram(document.getElementById('gender-chart2'));
+							}
+							if(chartType == "option3"){
+								chart = new google.visualization.ColumnChart(document.getElementById('gender-chart2'));
+							}
+							chart.draw(data, options);
+						}
+					});
+
+
+					$("#content-page").on("click", "#common_q", function() {
+				
+						var selector = $("#cq").val();
+						if($('#cq-id').prop('checked')){
+							selector = selector + "b";
+						}
+						else{
+							selector = selector + "a";
+						}
+				$.get("https://bioed.bu.edu/cgi-bin/students_23/Team_G/queries.py", 
+					{	id: "",
+						selector: selector
+					}, 
+					function(data) {
+						
+						var parentDiv = document.getElementById("q-div");
+						if($('#cq-id').prop('checked')){
+							parentDiv.innerHTML = "<br> <textarea id='my-textarea' rows='50' cols='50'>This is some text in the textarea.</textarea> <br> <button type='button' id='q-copy'>Copy</button>&nbsp;<button type='button' id='q-go'>View</button>"
+				
+						}
+						else{
+							parentDiv.innerHTML = "<br> <textarea id='my-textarea' rows='1' cols='2'>This is some text in the textarea.</textarea>"
+						}
+						$('#my-textarea').text(data);
+
+					},
+					"json" 
+				);
+					});
+
+					$("#content-page").on("click", "#singlePt_button", function() {
+				
+			var id = $("#id").val();
+			var id2 = $("#id2").val();
+			var query ="";
+			if(id2 > 0){
+				query = "multiPatientSearch";
+			}
+			else{
+				query = "singlePatientSearch";
+			}
+			if(sp_list.value != ""){
+				query = "listPatientSearch";
+				id = [1,2,3,4,5,6];
+			}
+
+				$.get("https://bioed.bu.edu/cgi-bin/students_23/Team_G/041923_Project_AJAX.py", 
+					{
+						id: id,
+						query: query
+					}, 
+					function(data) {
+
+$(document).ready(function() {
+    var columns = [];
+    $.each(data[0], function(key, value) {
+      columns.push({ "data": key, "title": key});
+    });
+	
+
+  data[0].RNASeq = '<a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM3893193">GSM3893193</a>';
+  data[1].RNASeq = '<a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM3893196">GSM3893196</a>';
+  data[2].RNASeq = '<a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM3893199">GSM3893199</a>';
+  data[3].RNASeq = '<a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM3893202">GSM3893202</a>';
+  data[4].RNASeq = '<a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM3893203">GSM3893203</a>';
+
+	
+	columns.push({ "data": "RNASeq", "title": "RNASeq"});
+    $('#example').DataTable({
+	  "dom": 'Bfrtip', 
+	  "buttons": ['csv', 'excel', 'pdf'],
+      "data": data,
+      "columns": columns
+    });
+});
+					},
+					"json" 
+				);
+			
+
+		});
+		
+		$("#content-page").on("click", "#multiplePt_button", function() {
+				$("#multi-query-div").empty();
+
+
+			var opt=$("#opt").val();
+			
+				$.get("https://bioed.bu.edu/cgi-bin/students_23/Team_G/queries.py", 
+				{selector: "wholePatientSearch"}, 
+					function(data) {
+    					$('#example2').DataTable({
+							"dom": 'Bfrtip', 
+	  						"buttons": ['csv', 'excel', 'pdf'],
+      						"data": data
+						});
+
+					},
+					"json" 
+				); 
+		});
+	}); //document ready
+
+		$(document).ready(function() {
+   			$("#homepage-button").click(function() {
+      			$("#content-page").empty();
+				var content = "<div style='background-color:#8b0000; box-shadow: 0 0 10px rgba(0, 0, 0, 0.9); height:50px; margin-top:-20px;'> <h2 style='color:#f5f5f5; text-align:center; line-height: 50px;'>Introduction</h2> </div> <br><div style='height: 700px; overflow: auto;'> <img src='study_logo.png' alt='study_logo' style='width:700px;display:block; margin:auto;'> <p style='color: #0c2340; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5; text-align: justify; padding-left:10px; padding-right:10px;'>DECAMP2 (Detection of Early Cancer Among Military Personnel 2) is an ongoing project developed under the Department of Defense (DoD) and funded in part by the DoD Lung Cancer Research Program, National Cancer Institute, Janssen Pharmaceuticals, and Novartis Institutes for Biomedical Research. The goal of the DECAMP2 study is to improve early detection of lung cancer in high-risk individuals using minimally invasive specimens. Participants are recruited for the study based on an assessment indicating they are considered high risk for lung cancer and must also have a diagnosis of chronic obstructive pulmonary disease, emphysema or at least one first-degree relative with a diagnosis of lung cancer.</p><p style='color: #0c2340; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5; text-align: justify; padding-left:10px; padding-right:10px; font-weight:bold;'>This webpage provides easy access to DECAMP2 patient data with multiple visualizations and handy features to explore data through multiple angles. Features of the webpage include: <br> - Overview of the study through visualizations <br> - Search for patient specific attributes <br> - Search for attributes for all patients <br> - Get answers to commonly asked questions about the study <br> - Find what attributes are collected and what they mean </p> <br><br> <p style='color: #0c2340; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5; text-align: center; padding-left:10px; padding-right:10px; margin-top:120px'>This webpage has been developed by Whitney Souery, Irzam Sarfraz & Ojong Tabi with Dr. Ehab Billatos & Dr. Marc Lenburg as faculty advisors at Boston University as a part of BF768 Spring 2023 course by Dr. Gary Benson.</p></div>"
+      			$("#content-page").html(content);
+      			return false;
+			});
+		});
+
+		$(document).ready(function() {
+   			$("#overview-button").click(function() {
+      			$("#content-page").empty();
+				var content = "<div style='background-color:#8b0000; box-shadow: 0 0 10px rgba(0, 0, 0, 0.9); height:50px; margin-top:-20px;'> <h2 style='color:#f5f5f5; text-align:center; line-height: 50px;'>Overview of DECAMP2</h2> </div> <br><div style='height: 700px; overflow: auto;'><div style='display: inline-block;' id='gender-chart'></div><div style='display: inline-block;' id='ethnicity-chart'></div><div style='display: inline-block;' id='race-chart'></div><div style='display: inline-block;' id='education-chart'><div style='display: inline-block;' id='age-chart'></div></div>"
+      			$("#content-page").html(content);
+
+				  $('#gender-chart').empty();
+				  $('#ethnicity-chart').empty();
+				  $('#race-chart').empty();
+				  $('#education-chart').empty();
+				  $('#age-chart').empty();
+
+                    $.get("https://bioed.bu.edu/cgi-bin/students_23/Team_G/queries.py", 
+                          {id: "", selector:"genderCount"},
+                          function(data){
+							if(data.length > 0){
+								drawPieChartGender(data);
+							}
+                          },
+                          "json"
+                    );
+					$.get("https://bioed.bu.edu/cgi-bin/students_23/Team_G/queries.py", 
+                          {id: "", selector:"ethnicityCount"},
+                          function(data){
+							if(data.length > 0){
+								drawPieChartEthnicity(data);
+							}
+                          },
+                          "json"
+                    );
+					$.get("https://bioed.bu.edu/cgi-bin/students_23/Team_G/queries.py", 
+                          {id: "", selector:"raceCount"},
+                          function(data){
+							if(data.length > 0){
+								drawPieChartRace(data);
+							}
+                          },
+                          "json"
+                    );
+					$.get("https://bioed.bu.edu/cgi-bin/students_23/Team_G/queries.py", 
+                          {id: "", selector:"educationCount"},
+                          function(data){
+							if(data.length > 0){
+								drawPieChartEducation(data);
+							}
+                          },
+                          "json"
+                    );
+					$.get("https://bioed.bu.edu/cgi-bin/students_23/Team_G/queries.py", 
+                          {id: "", selector:"ageCount"},
+                          function(data){
+							if(data.length > 0){
+								drawHistogram(data);
+							}
+                          },
+                          "json"
+                    );
+
+			function drawPieChartGender(targetScoresData) {
+				var data = google.visualization.arrayToDataTable([
+          ['Gender','Count'],
+          ['Female', parseInt(targetScoresData[0])],
+		  ['Male', parseInt(targetScoresData[1])]
+        ]);
+				var title = 'Gender';
+				var options = {'title':title,'width':600,'height':300};				
+				var chart = new google.visualization.PieChart(document.getElementById('gender-chart'));
+				chart.draw(data, options);
+			}
+			function drawPieChartEthnicity(targetScoresData) {
+				var data = google.visualization.arrayToDataTable([
+          ['Ethnicity','Count'],
+          ['Hispanic or Latino', parseInt(targetScoresData[0])],
+		  ['Not Hispanic or Latino', parseInt(targetScoresData[1])],
+		  ['Not Reported', parseInt(targetScoresData[2])],
+		  ['Unknown', parseInt(targetScoresData[3])]
+        ]);
+				var title = 'Ethnicity';
+				var options = {'title':title,'width':600,'height':300};				
+				var chart = new google.visualization.PieChart(document.getElementById('ethnicity-chart'));
+				chart.draw(data, options);
+			}
+			function drawPieChartRace(targetScoresData) {
+				var data = google.visualization.arrayToDataTable([
+          ['Race','Count'],
+          ['American Indian or Alaska Native', parseInt(targetScoresData[0])],
+		  ['Asian', parseInt(targetScoresData[1])],
+		  ['Black or African American', parseInt(targetScoresData[2])],
+		  ['Native Hawaiian or Other Pacific Islander', parseInt(targetScoresData[3])],
+		  ['Not Reported', parseInt(targetScoresData[4])],
+		  ['Unknown', parseInt(targetScoresData[5])],
+		  ['White', parseInt(targetScoresData[6])]
+        ]);
+				var title = 'Race';
+				var options = {'title':title,'width':600,'height':300};				
+				var chart = new google.visualization.PieChart(document.getElementById('race-chart'));
+				chart.draw(data, options);
+			}
+
+		function drawHistogram(array) {
+            var data = google.visualization.arrayToDataTable(array);
+            var histTitle = "Age Distributions"
+
+            var options = {
+                title: histTitle,
+                width: 1000,
+                height: 500,
+                hAxis: {
+                    title: 'Age'
+                },
+                vAxis: {
+                    title: 'Count'
+                },
+                legend: {
+                    position: 'none'
+                }
+            };
+
+            var chart = new google.visualization.Histogram(document.getElementById('age-chart'));
+            chart.draw(data, options);
+        };
+
+			function drawPieChartEducation(targetScoresData) {
+				var data = google.visualization.arrayToDataTable([
+          ['Education','Count'],
+          ['1 1/2 years of college', parseInt(targetScoresData[0])],
+		  ['1 1/2 yrs college', parseInt(targetScoresData[1])],
+		  ['1 year of city college', parseInt(targetScoresData[2])],
+		  ['2 years in college', parseInt(targetScoresData[3])],
+		  ['2nd grade', parseInt(targetScoresData[4])],
+		  ['2yrs college no degree', parseInt(targetScoresData[5])],
+		  ['32 credits', parseInt(targetScoresData[6])],
+		  ['8th grade or less', parseInt(targetScoresData[7])],
+		  ['9-11th grade', parseInt(targetScoresData[8])],
+		  ['Associate degree/some college', parseInt(targetScoresData[9])],
+		  ['Bachelors degree', parseInt(targetScoresData[10])],
+		  ['Cabrillo School of Nursing', parseInt(targetScoresData[11])],
+		  ['GED', parseInt(targetScoresData[12])],
+		  ['Graduate or Professional School', parseInt(targetScoresData[13])],
+		  ['High school graduate or high school equivalency', parseInt(targetScoresData[14])],
+		  ['Masters Equivalent', parseInt(targetScoresData[15])],
+		  ['Masters Degree', parseInt(targetScoresData[16])],
+		  ['Med School U.S. Army', parseInt(targetScoresData[17])],
+		  ['MSN', parseInt(targetScoresData[18])],
+		  ['Post high school training, other than college (for example, Vocational/technical school)', parseInt(targetScoresData[19])],
+		  ['Pt Left Field Blank', parseInt(targetScoresData[20])],
+		  ['Some college', parseInt(targetScoresData[21])],
+		  ['summer schools', parseInt(targetScoresData[22])],
+		  ['three years of college no degree', parseInt(targetScoresData[23])],
+		  ['Unknown/I prefer not to answer', parseInt(targetScoresData[24])]
+        ]);
+				var title = 'Education Level';
+				var options = {'title':title,'width':600,'height':300};				
+				var chart = new google.visualization.PieChart(document.getElementById('education-chart'));
+				chart.draw(data, options);
+			}
+      			return false;
+			});
+		});
+
+		$(document).ready(function() {
+   			$("#sp-button").click(function() {
+      			$("#content-page").empty();
+				var content = "<div style='background-color:#8b0000; box-shadow: 0 0 10px rgba(0, 0, 0, 0.9); height:50px; margin-top:-20px;'> <h2 style='color:#f5f5f5; text-align:center; line-height: 50px;'>Individual Patient Data</h2> </div> <br><div style='height: 700px; overflow: auto;'><div id ='sp-div' style='text-align: center; justify-content: center; align-items: center;'> Comma separated list of Patient IDs: &nbsp; <input type='text' id='sp_list'>&nbsp;<button type='button' id='singlePt_attr'>Select Attributes</button>&nbsp;<button type='button' id='singlePt_button'>Submit</button></div> <div id='single-query-div'><table id='example' class='table table-hover'> <thead> <tr></tr> </thead> </table></div></div></div>"
+				$("#content-page").html(content);
+      			return false;
+			});
+		});
+
+		$(document).ready(function() {
+   			$("#mp-button").click(function() {
+      			$("#content-page").empty();
+				var content = "<div style='background-color:#8b0000; box-shadow: 0 0 10px rgba(0, 0, 0, 0.9); height:50px; margin-top:-20px;'> <h2 style='color:#f5f5f5; text-align:center; line-height: 50px;'>Attributes</h2> </div> <br><br><br><div style='height: 700px; overflow: auto;'><div style='text-align: center;'><label for='opt'> Choose an option: </label> <select name = 'opt' id='opt'> <option value='ETHN_GRP_CAT_TXT'>ETHN_GRP_CAT_TXT</option> <option value='PERSON_GENDER'>PERSON_GENDER</option> <option value='RACE_CAT_TXT'>RACE_CAT_TXT</option> <option value='AGE'>AGE</option> <option value='MED_COND_TYPE'>MED_COND_TYPE</option> <option value='MED_COND_YNUNK'>MED_COND_YNUNK</option> <option value='MED_COND_DX_DAYS'>MED_COND_DX_DAYS</option> <option value='MED_COND_TYPE'>MED_COND_TYPE</option> <option value='MED_COND_YNUNK'>MED_COND_YNUNK</option> <option value='MED_COND_DX_DAYS'>MED_COND_DX_DAYS</option> <option value='PT_COMPL_OCC_EXP'>PT_COMPL_OCC_EXP</option> <option value='PT_COMPL_WRK_GRTR_1YR'>PT_COMPL_WRK_GRTR_1YR</option> <option value='PT_COMPL_OCCE_PTBLANK'>PT_COMPL_OCCE_PTBLANK</option> <option value='PT_COMPL_NUM_YRS_EXP'>PT_COMPL_NUM_YRS_EXP</option> <option value='PT_COMPL_EXP_TM_BLNK'>PT_COMPL_EXP_TM_BLNK</option> <option value='PT_COMPL_WT'>PT_COMPL_WT</option> <option value='PT_COMPL_HT_FEET'>PT_COMPL_HT_FEET</option> <option value='PT_COMPL_HT_INCH'>PT_COMPL_HT_INCH</option> <option value='PT_COMPL_DX'>PT_COMPL_DX</option> <option value='PT_REP_COND_ILL'>PT_REP_COND_ILL</option> <option value='PT_REP_AGE_FST_DX'>PT_REP_AGE_FST_DX</option> <option value='PT_REP_CX'>PT_REP_CX</option> <option value='CX_OTH_SPEC'>CX_OTH_SPEC</option> <option value='PT_REP_AGE_FST_DX'>PT_REP_AGE_FST_DX</option> <option value='PT_COMPL_CGH'>PT_COMPL_CGH</option> <option value='PT_COMPL_CGH_4_6_YNU'>PT_COMPL_CGH_4_6_YNU</option> <option value='PT_COMPL_SBRTH_YN'>PT_COMPL_SBRTH_YN</option> <option value='PT_COMPL_SBRTH_100YDS_YN'>PT_COMPL_SBRTH_100YDS_YN</option> <option value='PT_COMPL_SBRTH_HS_YN'>PT_COMPL_SBRTH_HS_YN</option> <option value='PT_COMPL_COPD_EX'>PT_COMPL_COPD_EX</option> <option value='COPD_EX_PTBLNK'>COPD_EX_PTBLNK</option> <option value='PT_COMPL_COPD_EX_HOS'>PT_COMPL_COPD_EX_HOS</option> <option value='PT_COMPL_PHL_CH_YN'>PT_COMPL_PHL_CH_YN</option> <option value='PT_COMPL_PHL_OCC'>PT_COMPL_PHL_OCC</option> <option value='PT_COMPL_PHL_YRS'>PT_COMPL_PHL_YRS</option> <option value='PT_COMPL_ALC_HX_YN'>PT_COMPL_ALC_HX_YN</option> <option value='PT_COMPL_ALC_CUR_YN'>PT_COMPL_ALC_CUR_YN</option> <option value='PT_COMPL_DRNK_WK'>PT_COMPL_DRNK_WK</option> <option value='PT_COMPL_SMOK_STAT'>PT_COMPL_SMOK_STAT</option> <option value='PT_COMPL_CIG_DAY'>PT_COMPL_CIG_DAY</option> <option value='PT_COMPL_YRS_SMOKE'>PT_COMPL_YRS_SMOKE</option> <option value='PT_COMPL_LIV_SMKR'>PT_COMPL_LIV_SMKR</option> <option value='PT_COMPL_NUM_SMKR'>PT_COMPL_NUM_SMKR</option> <option value='PT_COMPL_WRK_SMKR'>PT_COMPL_WRK_SMKR</option> <option value='PT_COMPL_WRK_YRS'>PT_COMPL_WRK_YRS</option> <option value='PT_COMPL_SCHOOL'>PT_COMPL_SCHOOL</option> <option value='PT_COMPL_MRTL_STS'>PT_COMPL_MRTL_STS</option> <option value='PT_COMPL_HSHLD_INC'>PT_COMPL_HSHLD_INC</option> <option value='PT_COMPL_NM_SP_INC'>PT_COMPL_NM_SP_INC</option> <option value='BLD_PRESS_SYSTOLIC'>BLD_PRESS_SYSTOLIC</option> <option value='BLD_PRESS_DIASTOLIC'>BLD_PRESS_DIASTOLIC</option> <option value='PT_TEMP'>PT_TEMP</option> <option value='PULSE_RATE_MSRMT_VAL'>PULSE_RATE_MSRMT_VAL</option> <option value='P_VS_RR_PHYSEXM_VAL'>P_VS_RR_PHYSEXM_VAL</option> <option value='FEV_FVC'>FEV_FVC</option> <option value='FEV_RS_PER'>FEV_RS_PER</option> <option value='TOT_LUNG_CAP_PR'>TOT_LUNG_CAP_PR</option> <option value='DLCO_RS'>DLCO_RS</option> <option value='RESLUNG_VOL_PER'>RESLUNG_VOL_PER</option> <option value='BRNCHSPY_BX_COLL_YN'>BRNCHSPY_BX_COLL_YN</option> <option value='ENDOBRON_BRSH_COLL_YN'>ENDOBRON_BRSH_COLL_YN</option> <option value='URN_SAMP_YN'>URN_SAMP_YN</option></select>&nbsp;<button type='button' id='multiplePt_button'>Submit</button></div><br><br><br><div style='width: 30%; float: left;'> <div style='text-align: center;'> <select id='makePlotDropdown'> <option value='option1'>Pie Chart</option> <option value='option2'>Histogram</option> <option value='option3' selected>Column Chart</option></select>&nbsp;<button type='button' id='makePlot'>Make Plot</button></div> <div id='gender-chart2'></div></div><div style='width: 70%; float: right;'><table id='example2' class='table table-hover'> <thead> <tr> <th>newID</th> <th> RACE_CAT_TXT </th></tr> </thead> </table></div></div> "
+      			$("#content-page").html(content);
+      			return false;
+			});
+		});
+
+		$(document).ready(function() {
+   			$("#dict-button").click(function() {
+      			$("#content-page").empty();
+				var content = "<div style='background-color:#8b0000; box-shadow: 0 0 10px rgba(0, 0, 0, 0.9); height:50px; margin-top:-20px;'> <h2 style='color:#f5f5f5; text-align:center; line-height: 50px;'>Dictionary</h2> </div> <br><div style='height: 700px; overflow: auto; text-align:center;'> <p style='color:#0c2340; text-align:center;'>Tables represent different characteristics and parameters collected from patients and their samples. Information about what these tables are about can be found in the dictionary below.</p><input type='text' id='searchInput' placeholder='Search...'><button id='searchButton'>Search</button><div style='height: 500px; overflow: auto;'><table id='myTable'> <tr> <th>Table Name</th> <th>Description</th> <th>Variable</th> <th>Details</th> </tr> <tr> <th>_D2DEMO</th> <td>Demography</td> <td>ETHN_GRP_CAT_TXT</td> <td>Ethnicity</td> </tr> <tr> <th>_D2DEMO</th> <td>Demography</td> <td>PERSON_GENDER</td> <td>Gender of a Person</td> </tr> <tr> <th>_D2DEMO</th> <td>Demography</td> <td>COUNTRY_CD</td> <td>Country of Residence (if not USA)</td> </tr> <tr> <th>_D2DEMO</th> <td>Demography</td> <td>ZIPCODE</td> <td>Zipcode (first 3 #)</td> </tr> <tr> <th>_D2DEMO</th> <td>Demography</td> <td>PAYMENT_METHOD</td> <td>Method of Payment</td> </tr> <tr> <th>_D2DEMO</th> <td>Demography</td> <td>RACE_CAT_TXT</td> <td>Race</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>AGE</td> <td>AGE</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>PT_SIGN_CNSNT</td> <td>Patient willing written informed consent</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>CNSNT_DAYS</td> <td>Consent Date (Days from Enrollment)</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>PT_AGE_5079_YN</td> <td>Patient 50-79 yrs old</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>LUNG_HX_QUES_YN</td> <td>Able fill out patient questionnaire</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>BIO_SPEC_TOL_YN</td> <td>Able tolerate all biospec collection</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>PT_HX_COPD_EMP_YN</td> <td>Have Hx COPD or Emphysema</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>REL_LG_CX_YN</td> <td>1st degree relative with Lung Cx</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>GRPB_SMK_STS</td> <td>Smoking Status</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>PT_SMK_10_25_YRS</td> <td>Smoked &gt;10 cigs/day for at least 25 years</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>PT_SMK_CIG_DAY</td> <td>Cigs smoked per day</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>PT_20_PK_YRS</td> <td>At least &gt;= 20 pack yrs / quit &lt;=20 yrs ago</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>GRP_B_PK_YRS</td> <td>Pack Years</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>FIBOPT_BRONCH_YN</td> <td>Willing fiberoptic bronchoscopy</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>SOC_COMPL_YN</td> <td>Able complete SOC FU</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>DX_LNG_CX</td> <td>Prior Dx Lung Cancer</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>CON_IND_NBRSH_FIBBRN_YN</td> <td>Contraindications</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>ALLG_ANT_YN</td> <td>Allergies to Anesthetic</td> </tr> <tr> <th>_D2ELIGCHECK</th> <td>Eligibility Checklist</td> <td>PT_WT_GRT_CT</td> <td>Weigh more than CT allow</td> </tr></table></div> </div>"
+				//var content = "<h2 style='color:#0c2340; text-align:center;'>Dictionary</h2>";
+      			$("#content-page").html(content);
+      			return false;
+			});
+		});
+
+		$(document).ready(function() {
+   			$("#help-button").click(function() {
+      			$("#content-page").empty();
+				  var content = "<div style='background-color:#8b0000; box-shadow: 0 0 10px rgba(0, 0, 0, 0.9); height:50px; margin-top:-20px;'> <h2 style='color:#f5f5f5; text-align:center; line-height: 50px;'>Help</h2> </div> <br><div style='height: 700px; overflow: auto;'><div class='my-div'><div style='height:100px; text-align:center;'><button id = 'help-how-button'>How to use?</button><button id = 'help-contact-button'>Contact</button><button id = 'help-links-button'>Links</button></div><div id='help-content'><p>Please select from the above options.</p></div></div></div>"
+      			$("#content-page").html(content);
+      			return false;
+			});
+		});
+
+		$(document).ready(function() {
+			$("#content-page").on("click", "#help-how-button", function() {
+      			$("#help-content").empty();
+				var content = "<div style='height: 700px; overflow: auto; text-align:center;'>For looking up individual patients, select the “Individual Patient” tab on the menu panel. Enter the patient ID and click submit to see the data collected for that individual. Note: if you would like to view more than one patient at once, separate the IDs of the patients (for example: 1,2,3,4). <br><br> For looking at aggregate metrics related to the DECAMP dataset, select the 'attributes' tab on the menu panel. First, choose an attribute option from the drop down menu; click submit to generate the data table. This data can also be displayed in plot form by using the 'make plot' option. <br><br> For exploring common questions related to the DECAMP dataset, select the 'Questions' tab on the menu panel. Use the dropdown menu at top to select a common question of interest and click find when ready to submit. Checking the 'return IDs' option will return the IDs of the relevant patients.</div>"
+      			$("#help-content").html(content);
+      			return false;
+			});
+		});
+
+		$(document).ready(function() {
+			$("#content-page").on("click", "#help-contact-button", function() {
+      			$("#help-content").empty();
+				var content = "<div style='height: 700px; overflow: auto; text-align:center;'>Website content developed by Whitney Souery, Irzam Sarfraz, Ojong Tabi at Boston University. Contact us with questions at soueryw@bu.edu </div>"
+      			$("#help-content").html(content);
+      			return false;
+			});
+		});
+		$(document).ready(function() {
+			$("#content-page").on("click", "#help-links-button", function() {
+      			$("#help-content").empty();
+				  var content = "<div style='height: 700px; overflow: auto; text-align:center;'>Associated Links: <br> For more information about the DECAMP study, please visit: <a href='https://www.decampresearch.org/DECAMP-1-PLUS'>https://www.decampresearch.org/DECAMP-1-PLUS</a> <br> <br> For more information about the DECAMP study gene expression data, please visit: <a href='https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE132829'>https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE132829</a>  </div>"
+      			$("#help-content").html(content);
+      			return false;
+			});
+		});
+
+		$(document).ready(function() {
+			$("#content-page").on("click", "#searchButton", function() {
+				var value = $("#searchInput").val().toLowerCase();
+				$("#myTable tbody tr").filter(function() {
+					$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+				});
+			});
+		});
+
+		$(document).ready(function() {
+   			$("#q-button").click(function() {
+      			$("#content-page").empty();
+				var content = "<div style='background-color:#8b0000; box-shadow: 0 0 10px rgba(0, 0, 0, 0.9); height:50px; margin-top:-20px;'> <h2 style='color:#f5f5f5; text-align:center; line-height: 50px;'>Explore Common Questions</h2> </div> <br><div style='height: 700px; overflow: auto; text-align:center;'><select id = 'cq'> <option value='q1'>How many patients currently in the DECAMP2 study have been diagnosed with emphysema or COPD?</option> <option value='q2'>How many patients are former smokers?</option> <option value='q3'>How many patients enrolled in DECAMP2 have a medical history significant for hypertension?</option><option value='q4'>How many patients are current smokers?</option><option value='q5'>Which patients reported shortness of breath as an ongoing symptom?</option></select> <br><br> Return IDs? <input type='checkbox' id='cq-id'> <button type='button' id='common_q'>Find</button> <div id = 'q-div'></div></div>"
+				//var content = ""
+      			$("#content-page").html(content);
+
+      			return false;
+			});
+		});
+
+	</script>
+</head>
+<body>
+	<div class="top-menu">
+		<div class="logo">
+			<img src="decamp2-logo.png" alt="decamp2-logo">
+		</div>
+		<p>DECAMP2: &nbsp;</p><p style="font-weight: lighter;">Detection of Early Cancer Among Military Personnel 2</p>
+	</div>
+	<div class="left-sidebar">
+		<div>
+			<a href="#" id="homepage-button">Home</a>
+		</div>
+		<div>
+			<a href="#" id="overview-button">Overview</a>
+		</div>
+		<div>
+			<a href="#" id="sp-button">Individual Patient</a>
+		</div>
+		<div>
+			<a href="#" id="mp-button">Attributes</a>
+		</div>
+		<div>
+			<a href="#" id="q-button">Questions</a>
+		</div>
+		<div>
+			<a href="#" id="dict-button">Dictionary</a>
+		</div>
+		<div>
+			<a href="#" id="help-button">Help</a>
+		</div>
+		<div style="text-align: center; background-color:#0c2340; box-shadow: none;"><img src="bu_2.jpg" alt="BUSM" style="height: 66px;margin-left: auto; margin-right: auto; margin-top: 140px;"></div>
+		<div style="text-align: center; background-color:#0c2340; box-shadow: none;"><img src="bu_1.png" alt="BUSM" style="height: 100px;margin-left: auto; margin-right: auto;"></div>
+	</div>
+	<div class="content" id="content-page">
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Patient Query Page</title>
+   
+        <!-- load the jQuery library -->
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        
+        <!-- CSS -->
+	<style>
+	/* asterisk below selects all elements, use it for styles that aren't inherited, like box-sizing */
+	/* box-sizing: border-box allows setting sizes for element content, padding, and border */
+	* {
+	box-sizing: border-box;
+	}
+
+	/* body selects the body element */
+	/* styles set here are inherited into some subelements of the body, unless overridden */
+	body {
+	font: 20px Arial;
+	}
+
+	/* input elements inside a form do not inherit the body font */
+	/* sets styles for input buttons */
+	input {
+	border: 1px solid transparent;
+	background-color: #f1f1f1; /* slightly gray */
+	padding: 10px;
+	font-size: 20px;
+	}
+
+	/* sets style for the submit button */
+	button {
+	background-color: DodgerBlue;
+	color: #fff; /* white; */
+	}
+	
+	h3 {
+	margin: 200
+	padding: 200
+	}
+
+	/* sets styles for a select element dropdown option */
+	select {
+	font-size: 16px;
+	width: 200px;
+	}
+
+	/* sets styles for a table, table header cell (th), and a table data cell (td) */
+	table, th, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+	padding: 15px;
+	}
+
+	/* sets width for the entire table */
+	table {
+	width: 400px;
+	}
+
+	/* sets text alignment for a table header cell */
+	th {
+	text-align: left;
+	}
+
+	/* sets text alignment for a table data cell */
+	td {
+	text-align: left;
+	}
+	
+	/* overrides default background color for every other table row (tr) */
+	tr:nth-child(even) {
+	background-color: #f2f2f2;
+	}	
+</style>
+ 
+</head>
+<body>
+	<h1>DECAMP2 Patient Query </h1>
+	<h2>Welcome to the DECAMP2 Patient Query! </h2> 
+	<p> 
+	Select from the options below whether you would like to perform a single patient query or query of the entire database. 
+	</p>
+
+	<h3 margin = 100>Single Patient Query</h3>
+    Enter a patient ID (example:xxxx):
+    <input type="text" id="id">
+    <button type="button" id="singlePt_button">Submit</button>
+    <div id="single-query-div"></div>
+    
+    <h3>Whole Database Search</h3>
+    Select one of the options here to search the entire database:
+   	<label for="opt"> </label>
+   	<select id="opt">
+			<option value="option1">Option 1</option>
+			<option value="option2">Option 2</option>
+			<option value="option3">Option 3</option>
+	</select>
+	<button type="button" id="multiplePt_button">Submit</button>
+	<div id= "multi-query-div"></div>
+	
+	<h3>Download Entire Dataset</h3>
+    <button type="button" id="download_button">Download Dataset</button><br><br>
+  
+	<script>
+
+		$(document).ready(function() {
+		
+			$("#singlePt_button").click(function() {
+                	$("#single-query-div").empty();
+
+                var id = $("#id").val();
+
+                if (CheckID(id) == 0) {
+                
+                    $.get("https://bioed.bu.edu/cgi-bin/students_23/Team_G/041923_Project_AJAX.py", 
+                        {
+                            id: id,
+                            query: "singlePatientSearch"
+                        }, 
+                        function(data) {
+                            if (data["error"] == 0) {
+                                submitSingleQuery(data["table_data"], id);
+                            } else {
+                                $("#single-query-div").append(data["message"]);
+                            } 
+
+                        },
+                        "json" 
+                    );
+                } else {
+                    alert(CheckID(id))
+                }
+
+            });
+            
+            $("#multiplePt_button").click(function() {
+                	$("#multi-query-div").empty();
+
+
+                var opt=$("#opt").val();
+
+                if (opt != "") {
+                
+                // TODO: add data path here
+                    $.get("https://bioed.bu.edu/cgi-bin/students_23/-----.py", 
+                        {
+                            opt: opt,
+                            query: "wholePatientSearch"
+                        }, 
+                        function(data) {
+                            if (data["error"] == 0) {
+                                submitMultipleQuery(data["table_data"], opt);
+                            } else {
+                                $("#multi-query-div").append(data["message"]);
+                            } 
+
+                        },
+                        "json" 
+                    );
+                } 
+                else {
+                    alert(CheckID(opt))
+                }
+
+            });
+
+		
+		function downloadDataset() {
+			// TODO: code to download entire dataset
+		}
+
+		function CheckID(id) {
+            errorMessage = ""
+            if (id == 0) {
+                return "You didnt enter data "
+            }
+            return errorMessage
+        }
+		
+		function SingleTableTitle(id) {
+            return `Data table for patient id ${id}`
+        }
+		
+		function submitSingleQuery(data,id) {
+			var id = document.getElementById("id").value;
+			
+			let tableTitle = SingleTableTitle(id)
+
+            let table_body_contents = "";
+            let rowData = "";
+
+            $("#single-query-div").empty();
+
+            if (data != "") {
+            
+				// TODO: add relevant data and change column headings
+                for (let row = 0; row < data.length; row++) {
+	
+                    rowData = data[row];
+                    a = rowData[0]
+                    b = rowData[1]
+                    c = rowData[2]
+                    d = rowData[3]
+
+                    table_body_contents += `<tr><td> ${a}</td><td> ${b}</td><td> ${c}</td><td> ${d}</td></tr>`;
+                }
+
+                //build the entire table template and susbstitute in the table data rows and the gene name 
+                let table_template = `<table class="table table-hover"><thead><tr><th>a</th><th>b</th><th>c</th><th>d</th></tr></thead><tbody>${table_body_contents}</tbody></table>`;
+
+                $("#single-query-div").append(tableTitle);
+                //put the final table in the table div
+                $("#single-query-div").append(table_template);
+            }
+		}
+
+		function submitMultipleQuery(data,opt) {
+			var opt = document.getElementById("opt").value;
+			
+			// TODO: make this more specific
+			let tableTitle = 'Whole Database Query'
+
+            let table_body_contents = "";
+            let rowData = "";
+
+            $("#multi-query-div").empty();
+
+            if (data != "") {
+            
+				// TODO: add relevant data and change column headings
+                for (let row = 0; row < data.length; row++) {
+	
+                    rowData = data[row];
+                    a = rowData[0]
+                    b = rowData[1]
+                    c = rowData[2]
+                    d = rowData[3]
+
+                    table_body_contents += `<tr><td> ${a}</td><td> ${b}</td><td> ${c}</td><td> ${d}</td></tr>`;
+                }
+
+                //build the entire table template and susbstitute in the table data rows 
+                let table_template = `<table class="table table-hover"><thead><tr><th>a</th><th>b</th><th>c</th><th>d</th></tr></thead><tbody>${table_body_contents}</tbody></table>`;
+
+                $("#multi-query-div").append(tableTitle);
+                //put the final table in the table div
+                $("#multi-query-div").append(table_template);
+            }
+		}
+	})
+	</script>
+</body>
+</html>

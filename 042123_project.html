@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Patient Query Page</title>
+   
+        <!-- load the jQuery library -->
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        
+        <!-- CSS -->
+	<style>
+	/* asterisk below selects all elements, use it for styles that aren't inherited, like box-sizing */
+	/* box-sizing: border-box allows setting sizes for element content, padding, and border */
+	* {
+	box-sizing: border-box;
+	}
+
+	/* body selects the body element */
+	/* styles set here are inherited into some subelements of the body, unless overridden */
+	body {
+	font: 20px Arial;
+	}
+
+	/* input elements inside a form do not inherit the body font */
+	/* sets styles for input buttons */
+	input {
+	border: 1px solid transparent;
+	background-color: #f1f1f1; /* slightly gray */
+	padding: 10px;
+	font-size: 20px;
+	}
+
+	/* sets style for the submit button */
+	button {
+	background-color: DodgerBlue;
+	color: #fff; /* white; */
+	}
+
+	/* sets styles for a select element dropdown option */
+	select {
+	font-size: 16px;
+	width: 200px;
+	}
+
+	/* sets styles for a table, table header cell (th), and a table data cell (td) */
+	table, th, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+	padding: 15px;
+	}
+
+	/* sets width for the entire table */
+	table {
+	width: 400px;
+	}
+
+	/* sets text alignment for a table header cell */
+	th {
+	text-align: left;
+	}
+
+	/* sets text alignment for a table data cell */
+	td {
+	text-align: left;
+	}
+	
+	/* overrides default background color for every other table row (tr) */
+	tr:nth-child(even) {
+	background-color: #f2f2f2;
+	}	
+</style>
+ 
+</head>
+<body>
+	<h1>DECAMP2 Patient Query </h1>
+	<h2>Welcome to the DECAMP2 Patient Query! </h2> 
+	<p> 
+	Select from the options below whether you would like to perform a single patient query or query of the entire database. 
+	</p>
+
+	<h3 margin = 100>Single Patient Query</h3>
+    Enter a patient ID (example:xxxx):
+    <input type="text" id="id">
+    <button type="button" id="singlePt_button">Submit</button>
+    <div id="single-query-div"></div>
+    <div id="single_download_button"></div>
+   
+    
+    <h3>Whole Database Search</h3>
+    Select one of the options here to search the entire database:
+   	<label for="opt"> Choose an option: </label>
+   	<select name = "opt" id="opt">
+        <option value="ETHN_GRP_CAT_TXT">ETHN_GRP_CAT_TXT</option>
+        <option value="PERSON_GENDER">PERSON_GENDER</option>
+        <option value="RACE_CAT_TXT">RACE_CAT_TXT</option>
+        <option value="AGE">AGE</option>
+        <option value="MED_COND_TYPE">MED_COND_TYPE</option>
+        <option value="MED_COND_YNUNK">MED_COND_YNUNK</option>
+        <option value="MED_COND_DX_DAYS">MED_COND_DX_DAYS</option>
+        <option value="MED_COND_TYPE">MED_COND_TYPE</option>
+        <option value="MED_COND_YNUNK">MED_COND_YNUNK</option>
+        <option value="MED_COND_DX_DAYS">MED_COND_DX_DAYS</option>
+        <option value="PT_COMPL_OCC_EXP">PT_COMPL_OCC_EXP</option>
+        <option value="PT_COMPL_WRK_GRTR_1YR">PT_COMPL_WRK_GRTR_1YR</option>
+        <option value="PT_COMPL_OCCE_PTBLANK">PT_COMPL_OCCE_PTBLANK</option>
+        <option value="PT_COMPL_NUM_YRS_EXP">PT_COMPL_NUM_YRS_EXP</option>
+        <option value="PT_COMPL_EXP_TM_BLNK">PT_COMPL_EXP_TM_BLNK</option>
+        <option value="PT_COMPL_WT">PT_COMPL_WT</option>
+        <option value="PT_COMPL_HT_FEET">PT_COMPL_HT_FEET</option>
+        <option value="PT_COMPL_HT_INCH">PT_COMPL_HT_INCH</option>
+        <option value="PT_COMPL_DX">PT_COMPL_DX</option>
+        <option value="PT_REP_COND_ILL">PT_REP_COND_ILL</option>
+        <option value="PT_REP_AGE_FST_DX">PT_REP_AGE_FST_DX</option>
+        <option value="PT_REP_CX">PT_REP_CX</option>
+        <option value="CX_OTH_SPEC">CX_OTH_SPEC</option>
+        <option value="PT_REP_AGE_FST_DX">PT_REP_AGE_FST_DX</option>
+        <option value="PT_COMPL_CGH">PT_COMPL_CGH</option>
+        <option value="PT_COMPL_CGH_4_6_YNU">PT_COMPL_CGH_4_6_YNU</option>
+        <option value="PT_COMPL_SBRTH_YN">PT_COMPL_SBRTH_YN</option>
+        <option value="PT_COMPL_SBRTH_100YDS_YN">PT_COMPL_SBRTH_100YDS_YN</option>
+        <option value="PT_COMPL_SBRTH_HS_YN">PT_COMPL_SBRTH_HS_YN</option>
+        <option value="PT_COMPL_COPD_EX">PT_COMPL_COPD_EX</option>
+        <option value="COPD_EX_PTBLNK">COPD_EX_PTBLNK</option>
+        <option value="PT_COMPL_COPD_EX_HOS">PT_COMPL_COPD_EX_HOS</option>
+        <option value="PT_COMPL_PHL_CH_YN">PT_COMPL_PHL_CH_YN</option>
+        <option value="PT_COMPL_PHL_OCC">PT_COMPL_PHL_OCC</option>
+        <option value="PT_COMPL_PHL_YRS">PT_COMPL_PHL_YRS</option>
+        <option value="PT_COMPL_ALC_HX_YN">PT_COMPL_ALC_HX_YN</option>
+        <option value="PT_COMPL_ALC_CUR_YN">PT_COMPL_ALC_CUR_YN</option>
+        <option value="PT_COMPL_DRNK_WK">PT_COMPL_DRNK_WK</option>
+        <option value="PT_COMPL_SMOK_STAT">PT_COMPL_SMOK_STAT</option>
+        <option value="PT_COMPL_CIG_DAY">PT_COMPL_CIG_DAY</option>
+        <option value="PT_COMPL_YRS_SMOKE">PT_COMPL_YRS_SMOKE</option>
+        <option value="PT_COMPL_LIV_SMKR">PT_COMPL_LIV_SMKR</option>
+        <option value="PT_COMPL_NUM_SMKR">PT_COMPL_NUM_SMKR</option>
+        <option value="PT_COMPL_WRK_SMKR">PT_COMPL_WRK_SMKR</option>
+        <option value="PT_COMPL_WRK_YRS">PT_COMPL_WRK_YRS</option>
+        <option value="PT_COMPL_SCHOOL">PT_COMPL_SCHOOL</option>
+        <option value="PT_COMPL_MRTL_STS">PT_COMPL_MRTL_STS</option>
+        <option value="PT_COMPL_HSHLD_INC">PT_COMPL_HSHLD_INC</option>
+        <option value="PT_COMPL_NM_SP_INC">PT_COMPL_NM_SP_INC</option>
+        <option value="BLD_PRESS_SYSTOLIC">BLD_PRESS_SYSTOLIC</option>
+        <option value="BLD_PRESS_DIASTOLIC">BLD_PRESS_DIASTOLIC</option>
+        <option value="PT_TEMP">PT_TEMP</option>
+        <option value="PULSE_RATE_MSRMT_VAL">PULSE_RATE_MSRMT_VAL</option>
+        <option value="P_VS_RR_PHYSEXM_VAL">P_VS_RR_PHYSEXM_VAL</option>
+        <option value="FEV_FVC">FEV_FVC</option>
+        <option value="FEV_RS_PER">FEV_RS_PER</option>
+        <option value="TOT_LUNG_CAP_PR">TOT_LUNG_CAP_PR</option>
+        <option value="DLCO_RS">DLCO_RS</option>
+        <option value="RESLUNG_VOL_PER">RESLUNG_VOL_PER</option>
+        <option value="BRNCHSPY_BX_COLL_YN">BRNCHSPY_BX_COLL_YN</option>
+        <option value="ENDOBRON_BRSH_COLL_YN">ENDOBRON_BRSH_COLL_YN</option>
+        <option value="URN_SAMP_YN">URN_SAMP_YN</option>
+	</select>
+	<input type="submit" id = "multiplePt_button" value="Submit">
+	<div id= "multi-query-div"></div>
+	<div id="multi_download_button"></div>
+	
+  
+	<script>
+
+		$(document).ready(function() {
+		
+			$("#singlePt_button").click(function() {
+                	$("#single-query-div").empty();
+
+                var id = $("#id").val();
+
+                if (CheckID(id) == 0) {
+                
+                    $.get("https://bioed.bu.edu/cgi-bin/students_23/Team_G/041923_Project_AJAX.py", 
+                        {
+                            id: id,
+                            query: "singlePatientSearch"
+                        }, 
+                        function(data) {
+                            if (data["error"] == 0) {
+                                submitSingleQuery(data["table_data"], id);
+                                //createButton();
+                            } else {
+                                $("#single-query-div").append(data["message"]);
+                            } 
+
+                        },
+                        "json" 
+                    );
+                } 
+                 else {
+                    alert(CheckID(id))
+                }
+                
+
+            });
+            
+            $("#multiplePt_button").click(function() {
+                	$("#multi-query-div").empty();
+
+
+                var opt=$("#opt").val();
+                
+                // // TODO: not working 
+                    $.get("https://bioed.bu.edu/cgi-bin/students_23/Team_G/042123_Project_AJAX_v2.py", 
+                        {opt: opt, query: "wholePatientSearch" }, 
+                        function(data) {
+                            if (data["error"] == 0) {
+                                submitMultipleQuery(data["table_data"], opt);
+                
+                            } else {
+                                $("#multi-query-div").append(data["message"]);
+                            } 
+
+                        },
+                        "json" 
+                    ); 
+    
+               // alert(check(opt)) // debugger
+                
+
+            });
+        }); //document ready
+	
+		
+		
+		function downloadDataset() {
+			// TODO: code to download entire dataset
+		}
+
+		function CheckID(id) {
+            errorMessage = ""
+            if (id == 0) {
+                return "You didnt enter data "
+            }
+            return errorMessage
+        }
+        
+      function check(opt) {
+            errorMessage = ""
+            return opt
+            return errorMessage
+        }
+		
+		function SingleTableTitle(id) {
+            return `Data table for patient id ${id}`
+        }
+		
+		function submitSingleQuery(data,id) {
+			
+			var id = document.getElementById("id").value;
+			
+			let tableTitle = SingleTableTitle(id)
+
+            let table_body_contents = "";
+            let rowData = "";
+
+            $("#single-query-div").empty();
+
+            if (data != "") {
+            
+				// TODO: add relevant data and change column headings
+                for (let row = 0; row < data.length; row++) {
+	
+                    rowData = data[row];
+                    id = rowData[0]
+                    ETHN_GRP_CAT_TXT = rowData[1]
+                    PERSON_GENDER = rowData[2]
+                    RACE_CAT_TXT = rowData[3]
+                    AGE = rowData[4]
+                    MED_COND_TYPE = rowData[5]
+                    MED_COND_YNUNK = rowData[6]
+                    MED_COND_DX_DAYS = rowData[7]
+                    MED_COND_TYPE = rowData[8]
+                    MED_COND_YNUNK = rowData[9]
+                    MED_COND_DX_DAYS = rowData[10]
+                    PT_COMPL_OCC_EXP = rowData[11]
+                    PT_COMPL_WRK_GRTR_1YR = rowData[12]
+                    PT_COMPL_OCCE_PTBLANK = rowData[13]
+                    PT_COMPL_NUM_YRS_EXP = rowData[14]
+                    PT_COMPL_EXP_TM_BLNK = rowData[15]
+                    PT_COMPL_WT = rowData[16]
+                    PT_COMPL_HT_FEET = rowData[17]
+                    PT_COMPL_HT_INCH = rowData[18]
+                    PT_COMPL_DX = rowData[19]
+                    PT_REP_COND_ILL = rowData[20]
+                    PT_REP_AGE_FST_DX = rowData[21]
+                    PT_REP_CX = rowData[22]
+                    CX_OTH_SPEC = rowData[23]
+                    PT_REP_AGE_FST_DX = rowData[24]
+                    PT_COMPL_CGH = rowData[25]
+                    PT_COMPL_CGH_4_6_YNU = rowData[26]
+                    PT_COMPL_SBRTH_YN = rowData[27]
+                    PT_COMPL_SBRTH_100YDS_YN = rowData[28]
+                    PT_COMPL_SBRTH_HS_YN = rowData[29]
+                    PT_COMPL_COPD_EX = rowData[30]
+                    COPD_EX_PTBLNK = rowData[31]
+                    PT_COMPL_COPD_EX_HOS = rowData[32]
+                    PT_COMPL_PHL_CH_YN = rowData[33]
+                    PT_COMPL_PHL_OCC = rowData[34]
+                    PT_COMPL_PHL_YRS = rowData[35]
+                    PT_COMPL_ALC_HX_YN = rowData[36]
+                    PT_COMPL_ALC_CUR_YN = rowData[37]
+                    PT_COMPL_DRNK_WK = rowData[38]
+                    PT_COMPL_SMOK_STAT = rowData[39]
+                    PT_COMPL_CIG_DAY = rowData[40]
+                    PT_COMPL_YRS_SMOKE = rowData[41]
+                    PT_COMPL_LIV_SMKR = rowData[42]
+                    PT_COMPL_NUM_SMKR = rowData[43]
+                    PT_COMPL_WRK_SMKR = rowData[44]
+                    PT_COMPL_WRK_YRS = rowData[45]
+                    PT_COMPL_SCHOOL = rowData[46]
+                    PT_COMPL_MRTL_STS= rowData[47]
+                    PT_COMPL_HSHLD_INC= rowData[48]
+                    PT_COMPL_NM_SP_INC= rowData[49]
+                    BLD_PRESS_SYSTOLIC= rowData[50]
+                    BLD_PRESS_DIASTOLIC= rowData[51]
+                    PT_TEMP= rowData[52]
+                    PULSE_RATE_MSRMT_VAL= rowData[53]
+                    P_VS_RR_PHYSEXM_VAL= rowData[54]
+                    FEV_FVC= rowData[55]
+                    FEV_RS_PER= rowData[56]
+                    TOT_LUNG_CAP_PR= rowData[57]
+                    DLCO_RS= rowData[58]
+                    RESLUNG_VOL_PER= rowData[59]
+                    BRNCHSPY_BX_COLL_YN= rowData[60]
+                    ENDOBRON_BRSH_COLL_YN= rowData[61]
+                    URN_SAMP_YN= rowData[62]
+
+                    table_body_contents += `<tr><td> ${id}</td><td> ${ETHN_GRP_CAT_TXT}</td><td> ${PERSON_GENDER}</td><td> ${RACE_CAT_TXT}</td><td> ${AGE}</td><td> ${MED_COND_TYPE}</td><td> ${MED_COND_YNUNK}</td><td> ${MED_COND_DX_DAYS}</td><td> ${MED_COND_TYPE}</td><td> ${MED_COND_YNUNK}</td><td> ${MED_COND_DX_DAYS}</td><td> ${PT_COMPL_OCC_EXP}</td><td> ${PT_COMPL_WRK_GRTR_1YR}</td><td> ${PT_COMPL_OCCE_PTBLANK}</td><td> ${PT_COMPL_NUM_YRS_EXP}</td><td> ${PT_COMPL_EXP_TM_BLNK}</td><td> ${PT_COMPL_WT}</td><td> ${PT_COMPL_HT_FEET}</td><td> ${PT_COMPL_HT_INCH}</td><td> ${PT_COMPL_DX}</td><td> ${PT_REP_COND_ILL}</td><td> ${PT_REP_AGE_FST_DX}</td><td> ${PT_REP_CX}</td><td> ${CX_OTH_SPEC}</td><td> ${PT_REP_AGE_FST_DX}</td><td> ${PT_COMPL_CGH}</td><td> ${PT_COMPL_CGH_4_6_YNU}</td><td> ${PT_COMPL_SBRTH_YN}</td><td> ${PT_COMPL_SBRTH_100YDS_YN}</td><td> ${PT_COMPL_SBRTH_HS_YN}</td><td> ${PT_COMPL_COPD_EX}</td><td> ${COPD_EX_PTBLNK}</td><td> ${PT_COMPL_COPD_EX_HOS}</td><td> ${PT_COMPL_PHL_CH_YN}</td><td> ${PT_COMPL_PHL_OCC}</td><td> ${PT_COMPL_PHL_YRS}</td><td> ${PT_COMPL_ALC_HX_YN}</td><td> ${PT_COMPL_ALC_CUR_YN}</td><td> ${PT_COMPL_DRNK_WK}</td><td> ${PT_COMPL_SMOK_STAT}</td><td> ${PT_COMPL_CIG_DAY}</td><td> ${PT_COMPL_YRS_SMOKE}</td><td> ${PT_COMPL_LIV_SMKR}</td><td> ${PT_COMPL_NUM_SMKR}</td><td> ${PT_COMPL_WRK_SMKR}</td><td> ${PT_COMPL_WRK_YRS}</td><td> ${PT_COMPL_SCHOOL}</td><td> ${PT_COMPL_MRTL_STS}</td><td> ${PT_COMPL_HSHLD_INC}</td><td> ${PT_COMPL_NM_SP_INC}</td><td> ${BLD_PRESS_SYSTOLIC}</td><td> ${BLD_PRESS_DIASTOLIC}</td><td> ${PT_TEMP}</td><td> ${PULSE_RATE_MSRMT_VAL}</td><td> ${P_VS_RR_PHYSEXM_VAL}</td><td> ${FEV_FVC}</td><td> ${FEV_RS_PER}</td><td> ${TOT_LUNG_CAP_PR}</td><td> ${DLCO_RS}</td><td> ${RESLUNG_VOL_PER}</td><td> ${BRNCHSPY_BX_COLL_YN}</td><td> ${ENDOBRON_BRSH_COLL_YN}</td><td> ${URN_SAMP_YN}</td></tr>`;
+
+                }
+
+                let table_template = `<table class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                        <th>id</th>
+                                        <th>ETHN_GRP_CAT_TXT</th>
+                                        <th>PERSON_GENDER</th>
+                                        <th>RACE_CAT_TXT</th>
+                                        <th>AGE</th>
+                                        <th>MED_COND_TYPE</th>
+                                        <th>MED_COND_YNUNK</th>
+                                        <th>MED_COND_DX_DAYS</th>
+                                        <th>MED_COND_TYPE</th>
+                                        <th>MED_COND_YNUNK</th>
+                                        <th>MED_COND_DX_DAYS</th>
+                                        <th>PT_COMPL_OCC_EXP</th>
+                                        <th>PT_COMPL_WRK_GRTR_1YR</th>
+                                        <th>PT_COMPL_OCCE_PTBLANK</th>
+                                        <th>PT_COMPL_NUM_YRS_EXP</th>
+                                        <th>PT_COMPL_EXP_TM_BLNK</th>
+                                        <th>PT_COMPL_WT</th>
+                                        <th>PT_COMPL_HT_FEET</th>
+                                        <th>PT_COMPL_HT_INCH</th>
+                                        <th>PT_COMPL_DX</th>
+                                        <th>PT_REP_COND_ILL</th>
+                                        <th>PT_REP_AGE_FST_DX</th>
+                                        <th>PT_REP_CX</th>
+                                        <th>CX_OTH_SPEC</th>
+                                        <th>PT_REP_AGE_FST_DX</th>
+                                        <th>PT_COMPL_CGH</th>
+                                        <th>PT_COMPL_CGH_4_6_YNU</th>
+                                        <th>PT_COMPL_SBRTH_YN</th>
+                                        <th>PT_COMPL_SBRTH_100YDS_YN</th>
+                                        <th>PT_COMPL_SBRTH_HS_YN</th>
+                                        <th>PT_COMPL_COPD_EX</th>
+                                        <th>COPD_EX_PTBLNK</th>
+                                        <th>PT_COMPL_COPD_EX_HOS</th>
+                                        <th>PT_COMPL_PHL_CH_YN</th>
+                                        <th>PT_COMPL_PHL_OCC</th>
+                                        <th>PT_COMPL_PHL_YRS</th>
+                                        <th>PT_COMPL_ALC_HX_YN</th>
+                                        <th>PT_COMPL_ALC_CUR_YN</th>
+                                        <th>PT_COMPL_DRNK_WK</th>
+                                        <th>PT_COMPL_SMOK_STAT</th>
+                                        <th>PT_COMPL_CIG_DAY</th>
+                                        <th>PT_COMPL_YRS_SMOKE</th>
+                                        <th>PT_COMPL_LIV_SMKR</th>
+                                        <th>PT_COMPL_NUM_SMKR</th>
+                                        <th>PT_COMPL_WRK_SMKR</th>
+                                        <th>PT_COMPL_WRK_YRS</th>
+                                        <th>PT_COMPL_SCHOOL</th>
+                                        <th>PT_COMPL_MRTL_STS</th>
+                                        <th>PT_COMPL_HSHLD_INC</th>
+                                        <th>PT_COMPL_NM_SP_INC</th>
+                                        <th>BLD_PRESS_SYSTOLIC</th>
+                                        <th>BLD_PRESS_DIASTOLIC</th>
+                                        <th>PT_TEMP</th>
+                                        <th>PULSE_RATE_MSRMT_VAL</th>
+                                        <th>P_VS_RR_PHYSEXM_VAL</th>
+                                        <th>FEV_FVC</th>
+                                        <th>FEV_RS_PER</th>
+                                        <th>TOT_LUNG_CAP_PR</th>
+                                        <th>DLCO_RS</th>
+                                        <th>RESLUNG_VOL_PER</th>
+                                        <th>BRNCHSPY_BX_COLL_YN</th>
+                                        <th>ENDOBRON_BRSH_COLL_YN</th>
+                                        <th>URN_SAMP_YN</th>
+                                        </thead>
+                                        <tbody>${table_body_contents}</tbody></table>`;
+
+                $("#single-query-div").append(tableTitle);
+                //put the final table in the table div
+                $("#single-query-div").append(table_template);
+                
+                // add button to download table as text file
+    			let downloadBtn = document.createElement("button");
+    			
+    			downloadBtn.innerHTML = "click here to download this data as a .txt file";
+    			
+                let singleDiv = document.querySelector('#single-query-div');
+
+    			downloadBtn.onclick = function() {
+      					let tableData = "";
+      					let rows = singleDiv.querySelectorAll("table tr");
+
+      				// loop through table rows and columns to build table data
+      				for (let i = 0; i < rows.length; i++) {
+        			let cols = rows[i].querySelectorAll("td");
+        			for (let j = 0; j < cols.length; j++) {
+          			tableData += cols[j].innerText + "\t";
+        			}
+        			tableData += "\n";
+     			}
+
+      		// create a blob with the table data
+      			let blob = new Blob([tableData], { type: "text/plain;charset=utf-8" });
+
+      		// create a download link and trigger click event to download file
+      			let downloadLink = document.createElement("a");
+      			downloadLink.href = URL.createObjectURL(blob);
+      			downloadLink.download = "singlePtTable.txt";
+      			downloadLink.click();
+   	 		};
+    			$("#single-query-div").append(downloadBtn);
+  		
+                
+    		} //if
+		} //funct
+
+    
+		
+		function submitMultipleQuery(data,opt) {
+			var opt = document.getElementById("opt").value;
+			
+			// TODO: (eventually) make this more specific to reflect option selected
+			let tableTitle = 'Whole Database Query'
+
+            let table_body_contents = "";
+            let rowData = "";
+
+            $("#multi-query-div").empty();
+
+            if (data != "") {
+            
+                for (let row = 0; row < data.length; row++) {
+	
+                    rowData = data[row];
+                    id = rowData[0]
+                    status = rowData[1]
+        
+
+                    table_body_contents += `<tr><td> ${id}</td><td> ${status}</td></tr>`;
+                } //for
+
+                let table_template = `<table class="table table-hover"><thead><tr><th>id</th><th>status</th></tr></thead><tbody>${table_body_contents}</tbody></table>`;
+
+                $("#multi-query-div").append(tableTitle);
+                //put the final table in the table div
+                $("#multi-query-div").append(table_template);
+
+				// add button to download table as text file
+    			let downloadBtn = document.createElement("button");
+    			
+    			downloadBtn.innerHTML = "click here to download this data as a .txt file";
+    			
+                let multiDiv = document.querySelector('#multi-query-div');
+
+    			downloadBtn.onclick = function() {
+      					let tableData = "";
+      					let rows = multiDiv.querySelectorAll("table tr");
+
+      				// loop through table rows and columns to build table data
+      				for (let i = 0; i < rows.length; i++) {
+        			let cols = rows[i].querySelectorAll("td");
+        			for (let j = 0; j < cols.length; j++) {
+          			tableData += cols[j].innerText + "\t";
+        			}
+        			tableData += "\n";
+     			}
+
+      		// create a blob with the table data
+      			let blob = new Blob([tableData], { type: "text/plain;charset=utf-8" });
+
+      		// create a download link and trigger click event to download file
+      			let downloadLink = document.createElement("a");
+      			downloadLink.href = URL.createObjectURL(blob);
+      			downloadLink.download = "multiPtTable.txt";
+      			downloadLink.click();
+   	 		};
+    			$("#multi-query-div").append(downloadBtn);
+  		
+        	} //if 
+		} // function
+	
+	</script>
+</body>
+</html>
